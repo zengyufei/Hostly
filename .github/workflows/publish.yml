@@ -7,14 +7,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-tauri:
+  cleanup:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write # Sometimes needed for certain OIDC/signing ops, harmless to add
+    steps:
+      - name: Delete existing release
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          delete_release: true
+          tag_name: releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-tauri:
+    needs: cleanup
+    permissions:
+      contents: write
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest] # Only building for Windows as requested
+        platform: [windows-latest, macos-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -37,14 +51,6 @@ jobs:
       - name: install dependencies (frontend)
         run: npm install
 
-      - name: Delete existing release
-        uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          delete_release: true
-          tag_name: releases
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and Release
         uses: tauri-apps/tauri-action@v0
         id: tauri-build
@@ -61,9 +67,9 @@ jobs:
           releaseDraft: false
           prerelease: false
 
-      - name: Upload Portable EXE
+      - name: Upload Portable EXE (Windows only)
         uses: softprops/action-gh-release@v1
-        if: success()
+        if: matrix.platform == 'windows-latest'
         with:
           tag_name: releases
           files: src-tauri/target/release/hosts-switcher.exe
