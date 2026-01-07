@@ -2,10 +2,22 @@
 
 一个基于 Tauri v2 + Rust 构建的轻量级、高性能 Windows Hosts 切换工具。支持 GUI 界面与强大的命令行 (CLI) 操作，专为开发与测试人员设计。
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zengyufei/hosts-switcher/main/img/index.png" alt="Hosts Switcher Main Interface" width="600" />
+</p>
+
 ## ✨ 主要功能
 
 - **环境切换**: 快速在 Dev、Test、Prod 等多套 Hosts 配置间切换。
-- **组合模式**: 支持 **单选** (互斥) 和 **多选** (叠加) 两种模式，灵活满足复杂网络环境需求。
+- **组合模式**: 支持 **单选** (互斥) 和 **多选** (叠加) 两种模式。
+  > _多选模式演示:_
+  > 
+  > ![Multi-Select Mode](https://raw.githubusercontent.com/zengyufei/hosts-switcher/main/img/multi.png)
+- **公共配置**: 设置所有环境通用的 hosts 规则 (Common Config)。
+  > _公共配置界面:_
+  >
+  > ![Common Config](https://raw.githubusercontent.com/zengyufei/hosts-switcher/main/img/common.png)
+
 - **系统保护**: 自动备份系统原始 Hosts，确保可随时还原。
 - **智能提权**: 自动检测并请求管理员权限，无需手动右键“以管理员运行”。
 - **CLI 支持**: 完整的命令行接口，支持脚本化调用、CI/CD 集成。
