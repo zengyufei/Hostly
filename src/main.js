@@ -360,6 +360,7 @@ importBtn.onclick = importData;
 exportBtn.onclick = exportAll;
 
 // Init
-window.addEventListener('DOMContentLoaded', () => {
-    loadData();
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadData();
+    selectProfile('system');
 });
