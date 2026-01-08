@@ -63,6 +63,12 @@ jobs:
       - name: install dependencies (frontend)
         run: npm install
 
+      - name: install dependencies (linux only)
+        if: contains(matrix.platform, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
       - name: install UPX
         if: matrix.platform == 'windows-latest'
         run: choco install upx
