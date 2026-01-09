@@ -88,9 +88,6 @@ enum Commands {
 }
 
 pub fn run_cli(app: Option<&AppHandle>) -> bool {
-    #[cfg(windows)]
-    check_elevation();
-
     // We need to parse args. 
     // clap::Parser::parse() reads from std::env::args().
     // If tauri app is run, first arg is binary path. 
@@ -99,6 +96,9 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
     if args.len() <= 1 {
         return false;
     }
+
+    #[cfg(windows)]
+    check_elevation();
 
     // Try parsing. If it fails (e.g. invalid command), clap usually prints help and exits.
     // However, if we just run `hostly.exe`, we want GUI.
