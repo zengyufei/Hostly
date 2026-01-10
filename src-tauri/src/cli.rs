@@ -84,6 +84,10 @@ enum Commands {
         /// Force multi-mode if needed (during open)
         #[arg(long, short)]
         multi: bool,
+
+        /// Force single-mode if needed
+        #[arg(long, short)]
+        single: bool,
     },
     /// Migrate from SwitchHosts
     Migration {
@@ -145,7 +149,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                 eprintln!("Error setting single mode: {}", e);
             } else {
                  println!("Single selection mode enabled.");
-                 let _ = storage::apply_config_internal(&ctx);
+                 if let Err(e) = storage::apply_config_internal(&ctx) {
+                     eprintln!("Failed to apply hosts: {}", e);
+                 }
+
             }
         },
         Some(Commands::Multi) => {
@@ -153,7 +160,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                 eprintln!("Error setting multi mode: {}", e);
             } else {
                  println!("Multi selection mode enabled.");
-                 let _ = storage::apply_config_internal(&ctx);
+                 if let Err(e) = storage::apply_config_internal(&ctx) {
+                     eprintln!("Failed to apply hosts: {}", e);
+                 }
+
             }
         },
         Some(Commands::Open { names, multi }) => {
@@ -190,7 +200,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                      eprintln!("Profile '{}' not found.", name);
                 }
             }
-            let _ = storage::apply_config_internal(&ctx);
+            if let Err(e) = storage::apply_config_internal(&ctx) {
+                eprintln!("Failed to apply hosts: {}", e);
+            }
+
         },
         Some(Commands::Close { names }) => {
              for name in names {
@@ -211,7 +224,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                       eprintln!("Profile '{}' not found.", name);
                  }
              }
-             let _ = storage::apply_config_internal(&ctx);
+             if let Err(e) = storage::apply_config_internal(&ctx) {
+                 eprintln!("Failed to apply hosts: {}", e);
+             }
+
         },
         Some(Commands::Export { name, target }) => {
             if let Some(n) = name {
@@ -242,7 +258,7 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                 }
             }
         },
-        Some(Commands::Import { name, target, open, multi }) => {
+        Some(Commands::Import { name, target, open, multi, single }) => {
              let path = PathBuf::from(&target);
              if !path.exists() {
                  eprintln!("Target file '{}' not found.", target);
@@ -291,6 +307,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                   if let Err(e) = storage::set_multi_select_internal(&ctx, true) {
                       eprintln!("Error enabling multi-select mode: {}", e);
                   }
+             } else if single {
+                  if let Err(e) = storage::set_multi_select_internal(&ctx, false) {
+                      eprintln!("Error enabling single-select mode: {}", e);
+                  }
              }
 
              for p_name in profiles_to_open {
@@ -308,7 +328,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
                       eprintln!("Warning: Cannot open profile '{}' (not found).", p_name);
                  }
              }
-             let _ = storage::apply_config_internal(&ctx);
+             if let Err(e) = storage::apply_config_internal(&ctx) {
+                 eprintln!("Failed to apply hosts: {}", e);
+             }
+
         },
         Some(Commands::Migration { target }) => {
              let path = PathBuf::from(&target);
@@ -327,7 +350,10 @@ pub fn run_cli(app: Option<&AppHandle>) -> bool {
 
              if let Ok(count) = storage::import_switchhosts_internal(&ctx, content) {
                  println!("Successfully migrated {} profiles from SwitchHosts backup '{}'", count, target);
-                 let _ = storage::apply_config_internal(&ctx);
+                 if let Err(e) = storage::apply_config_internal(&ctx) {
+                     eprintln!("Failed to apply hosts: {}", e);
+                 }
+
              } else {
                  eprintln!("Migration failed. Please check if the file is a valid SwitchHosts JSON backup.");
              }

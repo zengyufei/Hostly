@@ -63,8 +63,14 @@ npm run tauri build
 | `toggle` | 切换指定环境状态 | `hostly toggle --names Dev` |
 | `multi / single` | 切换全局选择模式 | `hostly multi` |
 | `export` | 导出配置或备份 | `hostly export --target backup.json` |
-| `import` | 导入配置或备份 | `hostly import --target backup.json` |
+| `import` | 导入配置或备份 | `hostly import --target backup.json`、`hostly import --target test.txt` |
 | `migration` | 迁移 SwitchHosts 备份 | `hostly migration --target sw_backup.json` |
+
+> 举例使用 hostly-core-win-x64.exe import ycf --target hosts.txt --open --single
+> 更改为单选后导入 hots.txt 到ycf且生效，如果 ycf 不存在则创建
+
+> 举例使用 hostly-core-win-x64.exe import ycf --target hosts.txt --open --multi
+> 更改为多选后导入 hots.txt 到ycf且生效，如果 ycf 不存在则创建
 
 ## 🛠️ 常见问题
 
